@@ -68,6 +68,6 @@ MonoBehaviour:
   numberOfBrickLayers: 5
   levelDepth: 10
   rowHeight: 0.5
-  rowHorizontalSpacing: 0
-  rowVerticalSpacing: 0
+  rowHorizontalSpacing: 0.1
+  rowVerticalSpacing: 0.1
   brickTemplate: {fileID: 6803007683270533604, guid: 4faaabe38db1709408b7b5adfa05c62d, type: 3}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using Discode.Breakout.Gameplay;
+using Discode.Breakout.Networking;
 
 namespace Discode.Breakout.UI
 {
@@ -13,15 +14,22 @@ namespace Discode.Breakout.UI
 
 		private void OnEnable()
 		{
-			GameObject controller = GameObject.FindGameObjectWithTag("GameController");
-			GameController gameController = controller.GetComponent<GameController>();
+			MyNetworkManager.OnClientStart += OnClientStart;
 			Scorer.OnScoreChanged += OnScoreChanged;
-			OnScoreChanged(gameController.GetCurrentScore());
+			OnScoreChanged(0);
 		}
 
 		private void OnDisable()
 		{
+			MyNetworkManager.OnClientStart -= OnClientStart;
 			Scorer.OnScoreChanged -= OnScoreChanged;
+		}
+
+		private void OnClientStart()
+		{
+			GameObject controller = GameObject.FindGameObjectWithTag("GameController");
+			GameController gameController = controller.GetComponent<GameController>();
+			OnScoreChanged(gameController.GetCurrentScore());
 		}
 
 		private void OnScoreChanged(int score)

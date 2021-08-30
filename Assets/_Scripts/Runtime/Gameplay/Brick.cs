@@ -40,8 +40,6 @@ namespace Discode.Breakout.Gameplay
 			}
 		}
 
-		public int RowPosition { get; set; }
-
 		private void OnEnable()
 		{
 			BrickManager.Instance.RegisterBrick(this);

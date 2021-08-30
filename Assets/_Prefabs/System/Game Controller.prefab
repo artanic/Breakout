@@ -48,6 +48,7 @@ MonoBehaviour:
   gameBehaviourTemplate: {fileID: 5542339503762936927, guid: f92e5fd86e6815849b797ce37816f6f2, type: 3}
   brickManagerTemplate: {fileID: 7169681887645343642, guid: d7ea1d4a32bf813439c009ef09972562, type: 3}
   scorerTemplate: {fileID: 96925168448076934, guid: 27d85b5fc42f60646b008f1ce1bf72b5, type: 3}
+  backgroundMaterial: {fileID: 2100000, guid: 267c41580b85ba94898c64a5d0a1f648, type: 2}
 --- !u!114 &6680658179392180040
 MonoBehaviour:
   m_ObjectHideFlags: 0

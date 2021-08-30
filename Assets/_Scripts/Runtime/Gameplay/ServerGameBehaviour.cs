@@ -7,7 +7,7 @@ using Discode.Breakout.Networking;
 
 namespace Discode.Breakout.Gameplay
 {
-    public class GameBehaviour : NetworkBehaviour
+    public class ServerGameBehaviour : NetworkBehaviour
 	{
 		[SerializeField]
 		private float levelDepth = 10f;

@@ -105,6 +105,7 @@ MonoBehaviour:
   ballRigidbody: {fileID: 7375765394904756860}
   initialVelocity: {x: 0, y: 8, z: 0}
   minVelocity: 8
+  normals: []
   Veloity: {x: 0, y: 0, z: 5}
 --- !u!54 &7375765394904756860
 Rigidbody:

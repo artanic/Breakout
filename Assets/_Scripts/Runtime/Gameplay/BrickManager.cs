@@ -70,19 +70,6 @@ namespace Discode.Breakout.Gameplay
 		public Brick[] Getbricks() => bricks.ToArray();
 
 		[Server]
-		public void RemoveBrick(int rowPosition, int layer)
-		{
-			for (int i = bricks.Count - 1; i >= 0; i--)
-			{
-				if (bricks[i].Layer == layer && bricks[i].RowPosition == rowPosition)
-				{
-					RemoveBrick(bricks[i]);
-					return;
-				}
-			}
-		}
-
-		[Server]
 		public void RemoveBrick(Brick brick)
 		{
 			NetworkServer.Destroy(brick.gameObject);
@@ -111,7 +98,6 @@ namespace Discode.Breakout.Gameplay
 				{
 					Brick newBlock = Instantiate(brickTemplate);
 					newBlock.Layer = i;
-					newBlock.RowPosition = j;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 					newBlock.name = $"Y{i} X{j} Brick";
 #endif

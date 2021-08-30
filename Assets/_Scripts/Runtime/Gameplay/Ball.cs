@@ -64,13 +64,13 @@ namespace Discode.Breakout.Gameplay
 			}
 		}
 
-		void FixedUpdate()
-		{
-			if (Moving && isServer)
-			{
-				ballRigidbody.velocity = ballRigidbody.velocity.normalized * Mathf.Max(ballRigidbody.velocity.magnitude, minVelocity);
-			}
-		}
+		//void FixedUpdate()
+		//{
+		//	if (Moving && isServer)
+		//	{
+		//		ballRigidbody.velocity = ballRigidbody.velocity.normalized * Mathf.Max(ballRigidbody.velocity.magnitude, minVelocity);
+		//	}
+		//}
 
 		private void OnCollisionEnter(Collision collision)
 		{
@@ -192,7 +192,7 @@ namespace Discode.Breakout.Gameplay
 			}
 
 			Moving = true;
-			ballRigidbody.velocity = Quaternion.AngleAxis(Random.Range(-45, 45), Vector3.forward) * Vector3.up;
+			ballRigidbody.velocity = Quaternion.AngleAxis(Random.Range(-45, 45), Vector3.forward) * Vector3.up * minVelocity;
 			lastFrameVelocity = ballRigidbody.velocity;
 			NetworkServer.SendToAll(new AudioEventMessage { AudioEvent = AudioEventType.Launch, HorizontalPosition = transform.position.x, VerticalPosition = transform.position.y });
 		}
