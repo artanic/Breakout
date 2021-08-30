@@ -9,7 +9,7 @@ namespace Discode.Breakout.Gameplay
     {
 		public delegate void ScoreEventHandler(int score);
 
-		public event ScoreEventHandler OnScoreChanged = null;
+		public static event ScoreEventHandler OnScoreChanged = null;
 
 
 		[SyncVar(hook = nameof(OnScoreValueChanged))]
@@ -17,6 +17,14 @@ namespace Discode.Breakout.Gameplay
 		private int currentScore;
 
 		public int CurrentScore => currentScore;
+
+		private void Start()
+		{
+			if (isClient)
+			{
+				OnScoreChanged?.Invoke(CurrentScore);
+			}
+		}
 
 		[Server]
 		public void AddScore(int amount)
@@ -39,7 +47,6 @@ namespace Discode.Breakout.Gameplay
 			}
 		}
 
-		[ServerCallback]
 		private void OnScoreValueChanged(int oldValue, int newValue)
 		{
 			OnScoreChanged?.Invoke(newValue);

@@ -15,10 +15,10 @@ namespace Discode.Breakout.Gameplay
 		private MeshFilter meshFilter = null;
 
 		[SerializeField]
-		private Rigidbody ballRigidbody = null;
+		private SphereCollider sphereCollider = null;
 
 		[SerializeField]
-		private float contantSpeed = 5;
+		private Rigidbody ballRigidbody = null;
 
 		[SerializeField]
 		private Vector3 initialVelocity = new Vector3(0, 10 , 0);
@@ -28,64 +28,200 @@ namespace Discode.Breakout.Gameplay
 
 		private Vector3 lastFrameVelocity;
 
+		private List<Vector3> points = new List<Vector3>();
+
+		[SerializeField]
+		private List<Vector3> normals = new List<Vector3>();
+
 		public float Size => meshFilter.sharedMesh.bounds.size.x * transform.localScale.x;
 
 		public Vector3 Veloity = Vector3.zero;
 
+		public Vector3 Velocity { get; set; }
+
 		public bool Moving { get; private set; }
 
-		[Server]
-		private void LateUpdate()
+		private int velocityOffsetMultiplier = 0;
+
+		private GameObject secondToLastCollisionObject = null;
+
+		private GameObject lastCollectionObject = null;
+		public GameObject LastCollectionObject
 		{
-			if (Moving)
+			get { return lastCollectionObject; }
+			set
 			{
-				ballRigidbody.velocity = contantSpeed * ballRigidbody.velocity.normalized;
+				secondToLastCollisionObject = lastCollectionObject;
+				lastCollectionObject = value;
+			}
+		}
+
+		private void Update()
+		{
+			if (Moving && isServer)
+			{
 				lastFrameVelocity = ballRigidbody.velocity;
 			}
 		}
 
-		[ServerCallback]
+		void FixedUpdate()
+		{
+			if (Moving && isServer)
+			{
+				ballRigidbody.velocity = ballRigidbody.velocity.normalized * Mathf.Max(ballRigidbody.velocity.magnitude, minVelocity);
+			}
+		}
+
 		private void OnCollisionEnter(Collision collision)
 		{
-			if (Moving is false)
+			if (isServer == false || Moving is false)
 			{
 				return;
 			}
 
-			if (collision.gameObject.CompareTag("Obstacle"))
+#if UNITY_EDITOR
+			if (points.Count >= 10)
 			{
-				var speed = lastFrameVelocity.magnitude;
-				var direction = Vector3.Reflect(lastFrameVelocity.normalized, collision.contacts[0].normal);
+				points.RemoveAt(0);
+			}
+			points.Add(collision.contacts[0].point);
 
-				//Debug.Log("Out Direction: " + direction);
-				ballRigidbody.velocity = direction * contantSpeed; //Mathf.Max(speed, minVelocity);
-				ballRigidbody.AddForce(-collision.contacts[0].normal + new Vector3(Random.Range(-1, 1), Random.Range(-1, 1)));
+			Debug.Log("Collision Count = " + collision.contactCount);
+#endif
+
+			Vector3 normal = collision.contacts[0].normal;
+
+#if UNITY_EDITOR
+			if (points.Count >= 10)
+			{
+				normals.RemoveAt(0);
+			}
+			normals.Add(normal);
+#endif
+
+			//Store game object hit
+			GameObject objectHit = collision.gameObject;
+
+			float speed = Mathf.Max(lastFrameVelocity.magnitude, minVelocity);
+			if (objectHit.CompareTag("Brick"))
+			{
+				NetworkServer.SendToAll(new AudioEventMessage { AudioEvent = AudioEventType.Break });
+
+				ballRigidbody.velocity = Vector3.Reflect(lastFrameVelocity, normal).normalized * speed;
+			}
+			else if (objectHit.CompareTag("Obstacle"))
+			{
+
+				NetworkServer.SendToAll(new AudioEventMessage { AudioEvent = AudioEventType.Bounce });
+
+				ballRigidbody.velocity = Vector3.Reflect(lastFrameVelocity, normal).normalized * speed;
+			}
+			else if (objectHit.CompareTag("Paddle"))
+			{
+				NetworkServer.SendToAll(new AudioEventMessage { AudioEvent = AudioEventType.Bounce });
+
+				Paddle paddle = objectHit.GetComponent<Paddle>();
+
+				//If ball is lower than the paddle, exit this method and
+				//allow the ball to continue towards the screen bottom
+				if (transform.position.y < objectHit.transform.position.y + (paddle.Height * 0.5f))
+				{
+#if UNITY_EDITOR
+					Debug.Log("Ball Under Paddle");
+#endif
+					ballRigidbody.velocity = Vector3.Reflect(lastFrameVelocity, normal).normalized * speed;
+				}
+				else
+				{
+					//Get paddle end points
+					float p1 = paddle.LeftEnd.x; // paddleLeftEnd.transform.position.x;
+					float p2 = paddle.RightEnd.x; // paddleRightEnd.transform.position.x;
+												  //Calculate the new value of x for the ball to be directed
+					float PaddleLength = p2 - p1;
+					float BallLocation = transform.position.x - p1;
+					float xDirection = ((BallLocation / PaddleLength) - 0.5f) * 5;
+					//Set new ball direction
+					var direction = new Vector3(xDirection, 1f, 0f).normalized;
+					ballRigidbody.velocity = direction * speed;
+				}
+			}
+
+			//Check if the ball is moving mostly horizontally. If the ball is 
+			//too horizontal, increase or decrease the Y direction accordingly
+			if (objectHit == secondToLastCollisionObject)
+			{
+				velocityOffsetMultiplier++;
+
+				if (ballRigidbody.velocity.y < (minVelocity * 0.5f) && ballRigidbody.velocity.y > 0f)
+				{
+					ballRigidbody.AddForce(new Vector2(0, 0.2f * velocityOffsetMultiplier));
+				}
+				if (ballRigidbody.velocity.y > -(minVelocity * 0.5f) && ballRigidbody.velocity.y <= 0f)
+				{
+					ballRigidbody.AddForce(new Vector2(0, -0.2f * velocityOffsetMultiplier));
+				}
+			}
+			else
+			{				
+				velocityOffsetMultiplier = 0;
+			}
+
+			LastCollectionObject = objectHit;
+			lastFrameVelocity = ballRigidbody.velocity;
+		}
+
+		private void OnTriggerEnter(Collider other)
+		{
+			if (other.CompareTag("Dropzone"))
+			{
+				if (isServer)
+				{
+					NetworkServer.SendToAll(new AudioEventMessage { AudioEvent = AudioEventType.Dropout });
+				}
+
+				OnOutOfBounds?.Invoke(this);
 			}
 		}
 
-		[ServerCallback]
-		private void OnTriggerEnter(Collider other)
+		[Server]
+		public void Launch()
 		{
-			OnOutOfBounds?.Invoke(this);
-		}
+			if (isServer == false || Moving)
+			{
+				return;
+			}
 
-		[Command(requiresAuthority = false)]
-		public void Launch(Vector3 direction)
-		{
 			Moving = true;
-			ballRigidbody.velocity = Quaternion.AngleAxis(Random.Range(-45, 45), Vector3.forward) * (Vector3.up * contantSpeed);
-			//StartCoroutine(MovingProcess());
+			ballRigidbody.velocity = Quaternion.AngleAxis(Random.Range(-45, 45), Vector3.forward) * Vector3.up;
+			lastFrameVelocity = ballRigidbody.velocity;
+			NetworkServer.SendToAll(new AudioEventMessage { AudioEvent = AudioEventType.Launch, HorizontalPosition = transform.position.x, VerticalPosition = transform.position.y });
 		}
 
-		//private IEnumerator MovingProcess()
-		//{
-		//	while (Moving)
-		//	{
-		//		ballRigidbody.velocity = contantSpeed * ballRigidbody.velocity.normalized;
-		//		lastFrameVelocity = ballRigidbody.velocity;
+#if UNITY_EDITOR
+		void OnDrawGizmos()
+		{
+			if (points.Count > 1)
+			{
+				for (int i = points.Count - 1; i >= 0; i--)
+				{
+					if (i == 0)
+					{
+						continue;
+					}
+					Gizmos.color = Color.red;
+					Gizmos.DrawLine(i == points.Count - 1 ? transform.position : points[ i + 1], points[i]);
+				}
+			}
 
-		//		yield return null;
-		//	}
-		//}
+			if (normals.Count > 0)
+			{
+				for (int i = normals.Count - 1; i >= 0; i--)
+				{
+					Gizmos.color = Color.green;
+					Gizmos.DrawLine(points[i], points[i] + normals[i]);
+				}
+			}
+		}
+#endif
 	}
 }

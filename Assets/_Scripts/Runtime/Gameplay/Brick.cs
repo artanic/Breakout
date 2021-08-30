@@ -12,15 +12,64 @@ namespace Discode.Breakout.Gameplay
 		public event BrickEventHandler OnDestryoed = null;
 
 		[SerializeField]
-		private MeshFilter meshFilter = null;
+		private BoxCollider boxCollider = null;
 
-		public float Width => meshFilter.sharedMesh.bounds.size.x * transform.localScale.x;
+		[SerializeField]
+		private RowColorStore rowColorStore = null;
 
-		[ServerCallback]
+		[SyncVar(hook = nameof(OnLayerChanged))]
+		private int layer = -1;
+
+		private Material instanceMaterial;
+
+		public float Width => boxCollider.size.x;
+
+		public int Layer
+		{
+			get { return layer; }
+			set
+			{
+				if (layer != value)
+				{
+					if (isServer && isClient)
+					{
+						OnLayerChanged(layer, value);
+					}
+					layer = value;
+				}
+			}
+		}
+
+		public int RowPosition { get; set; }
+
+		private void OnEnable()
+		{
+			BrickManager.Instance.RegisterBrick(this);
+		}
+
+		private void OnDisable()
+		{
+			BrickManager.Instance.UnregisterBrick(this);
+		}
+
+		private void OnDestroy()
+		{
+			if (instanceMaterial != null)
+			{
+				Destroy(instanceMaterial);
+			}
+		}
+
 		private void OnCollisionEnter(Collision collision)
 		{
 			OnDestryoed?.Invoke(this);
-			NetworkServer.Destroy(gameObject);
+		}
+
+		private void OnLayerChanged(int oldValue, int newValue)
+		{
+			MeshRenderer renderer = GetComponent<MeshRenderer>();
+			renderer.material.SetColor("_BaseColor", rowColorStore.GetColor(newValue));
+			instanceMaterial = renderer.material;
 		}
 	}
 }

@@ -11,22 +11,17 @@ namespace Discode.Breakout.UI
         [SerializeField]
         private TMP_Text scoreDisplay = null;
 
-		private Scorer scorer = null;
-
 		private void OnEnable()
 		{
 			GameObject controller = GameObject.FindGameObjectWithTag("GameController");
-			scorer = controller.GetComponent<Scorer>();
-			scorer.OnScoreChanged += OnScoreChanged;
-			OnScoreChanged(scorer.CurrentScore);
+			GameController gameController = controller.GetComponent<GameController>();
+			Scorer.OnScoreChanged += OnScoreChanged;
+			OnScoreChanged(gameController.GetCurrentScore());
 		}
 
 		private void OnDisable()
 		{
-			if (scorer != null)
-			{
-				scorer.OnScoreChanged -= OnScoreChanged;
-			}
+			Scorer.OnScoreChanged -= OnScoreChanged;
 		}
 
 		private void OnScoreChanged(int score)

@@ -7,8 +7,9 @@ namespace Discode.Breakout.Gameplay
 {
     public class Paddle : NetworkBehaviour
     {
+
         [SerializeField]
-        private MeshFilter meshFilter = null;
+        private BoxCollider boxCollider = null;
 
         [SerializeField]
         private float speed = 1;
@@ -18,12 +19,20 @@ namespace Discode.Breakout.Gameplay
 
         public bool HasBall => ball != null;
 
+        public Vector3 LeftEnd => new Vector3(transform.position.x - (boxCollider.size.x * 0.5f), transform.position.y, transform.position.z);
+
+        public Vector3 RightEnd => new Vector3(transform.position.x + (boxCollider.size.x * 0.5f), transform.position.y, transform.position.z);
+
+        public float Height => boxCollider.size.y;
+
+        [Server]
         public void AssignBall(Ball ball)
 		{
             this.ball = ball;
             holdBallRoutine = StartCoroutine(HoldBall());
         }
 
+        [Server]
         public void ReleaseBall()
 		{
             if (holdBallRoutine != null)
@@ -31,14 +40,13 @@ namespace Discode.Breakout.Gameplay
                 StopCoroutine(holdBallRoutine);
                 holdBallRoutine = null;
 			}
-            ball.Launch(new Vector3(0, 0, Mathf.Cos(Mathf.Deg2Rad * 90)));
+            ball.Launch();
 		}
 
+        [Server]
         public void MoveLeft()
 		{
-            Vector3 farLeftSide = new Vector3(transform.position.x - (meshFilter.sharedMesh.bounds.extents.x * transform.localScale.x), transform.position.y, transform.position.z);
-
-            Vector3 screenPosition = Camera.main.WorldToScreenPoint(farLeftSide);
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(LeftEnd);
 
             if (screenPosition.x < 1)
 			{
@@ -48,11 +56,10 @@ namespace Discode.Breakout.Gameplay
             transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left, speed * Time.deltaTime);
         }
 
+        [Server]
         public void MoveRight()
         {
-            Vector3 farRightSide = new Vector3(transform.position.x + (meshFilter.sharedMesh.bounds.extents.x * transform.localScale.x), transform.position.z);
-
-            Vector3 screenPosition = Camera.main.WorldToScreenPoint(farRightSide);
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(RightEnd);
 
             if (screenPosition.x > Screen.width - 1)
             {
@@ -66,7 +73,7 @@ namespace Discode.Breakout.Gameplay
 		{
             while(HasBall)
 			{
-                ball.transform.position = new Vector3(transform.position.x, transform.position.y + (meshFilter.sharedMesh.bounds.extents.y * transform.localScale.y) + (ball.Size * 0.5f), transform.position.z);
+                ball.transform.position = new Vector3(transform.position.x, transform.position.y + ((boxCollider.size.y + ball.Size) * 0.5f), transform.position.z);
                 yield return null;
             }
 

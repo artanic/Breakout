@@ -8,10 +8,18 @@ namespace Discode.Breakout.Players
 {
 	public class Player : NetworkBehaviour
 	{
-		[SerializeField]
-		private Paddle paddle;
+		public delegate void PlayerEventHandler(Player player);
 
-		public Paddle CurrentPaddle => paddle;
+		public event PlayerEventHandler OnLeavingGame = null;
+
+		public int PlayerID { get; set; }
+
+		public Paddle CurrentPaddle { get; set; }
+
+		private void OnDestroy()
+		{
+			OnLeavingGame?.Invoke(this);
+		}
 
 		private void Update()
 		{
@@ -22,19 +30,37 @@ namespace Discode.Breakout.Players
 
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				if (paddle.HasBall)
-				{
-					paddle.ReleaseBall();
-				}
+				ReleaseBall();
 			}
 
 			if (Input.GetKey(KeyCode.RightArrow))
 			{
-				paddle.MoveRight();
+				MovePaddleRight();
 			}
 			else if (Input.GetKey(KeyCode.LeftArrow))
 			{
-				paddle.MoveLeft();
+				MovePaddleLeft();
+			}
+		}
+
+		[Command]
+		private void MovePaddleLeft()
+		{
+			CurrentPaddle?.MoveLeft();
+		}
+
+		[Command]
+		private void MovePaddleRight()
+		{
+			CurrentPaddle?.MoveRight();
+		}
+
+		[Command]
+		private void ReleaseBall()
+		{
+			if (CurrentPaddle.HasBall)
+			{
+				CurrentPaddle.ReleaseBall();
 			}
 		}
 	}

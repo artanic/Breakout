@@ -58,17 +58,18 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 4977917035824591652, guid: b7b2418508840d543b6b59ba0ad6fd50, type: 3}
+  playerPrefab: {fileID: 6121433315369443325, guid: 2be4ab117009ea248b704925317f61fa, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
+  - {fileID: 1534594276885996336, guid: f92e5fd86e6815849b797ce37816f6f2, type: 3}
   - {fileID: 2208456900575534751, guid: b5e309d7b152c924682495b3b41066ab, type: 3}
+  - {fileID: 4977917035824591652, guid: b7b2418508840d543b6b59ba0ad6fd50, type: 3}
   - {fileID: 3142899907351332027, guid: 740245965a740f3498605e5ec8e3db8a, type: 3}
-  - {fileID: 1976635445429045271, guid: 067ae938aede3fb4b96a670f01c205a4, type: 3}
+  - {fileID: 8627034864514000983, guid: 4faaabe38db1709408b7b5adfa05c62d, type: 3}
   - {fileID: 3142899907351332027, guid: 0629f2c0c6697f54cae467f52c6a9bfc, type: 3}
-  levelBuilderTemplate: {fileID: 5417890355986948148, guid: bf50ee1bb12f7f742b7bfbf5c11b2782, type: 3}
-  firstPlayerPaddlePosition: 0.2
-  secondPlayerPaddlePosition: 0.4
+  - {fileID: 3705550546577574320, guid: 27d85b5fc42f60646b008f1ce1bf72b5, type: 3}
+  - {fileID: 2032525892051901368, guid: d7ea1d4a32bf813439c009ef09972562, type: 3}
 --- !u!114 &1867438218058575448
 MonoBehaviour:
   m_ObjectHideFlags: 0
