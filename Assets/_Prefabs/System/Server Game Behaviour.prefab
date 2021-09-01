@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1534594276885996336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7629918057547327038}
+  - component: {fileID: 1673647860868347560}
+  - component: {fileID: 5542339503762936927}
+  - component: {fileID: 1857976195180488615}
+  m_Layer: 0
+  m_Name: Server Game Behaviour
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7629918057547327038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534594276885996336}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1673647860868347560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534594276885996336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 1
+  visible: 0
+  m_AssetId: f92e5fd86e6815849b797ce37816f6f2
+  hasSpawned: 0
+--- !u!114 &5542339503762936927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534594276885996336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44cf366cb0a39d347ba891e9827efa8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  levelDepth: 10
+  levelBuilder: {fileID: 1857976195180488615}
+  firstPlayerPaddlePosition: 0.05
+  secondPlayerPaddlePosition: 0.25
+--- !u!114 &1857976195180488615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534594276885996336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce3b2192db5923479f59b98c0a15ef1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  borderTemplate: {fileID: 3142899907351332028, guid: 740245965a740f3498605e5ec8e3db8a, type: 3}
+  dropZoneTemplate: {fileID: 3142899907351332028, guid: 0629f2c0c6697f54cae467f52c6a9bfc, type: 3}
+  paddleTemplate: {fileID: 1576518752094639553, guid: b7b2418508840d543b6b59ba0ad6fd50, type: 3}
+  ballTemplate: {fileID: -3073010196920514131, guid: b5e309d7b152c924682495b3b41066ab, type: 3}
+  brickTemplate: {fileID: 6803007683270533604, guid: 4faaabe38db1709408b7b5adfa05c62d, type: 3}
+  levelDefinitions:
+  - {fileID: 11400000, guid: 769aff5f916fc264298a9878e6160988, type: 2}
+  defaultLevelDefinition: {fileID: 11400000, guid: 769aff5f916fc264298a9878e6160988, type: 2}

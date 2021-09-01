@@ -358,7 +358,17 @@ namespace Discode.Breakout.Editor
 		#endregion
 
 		#region View Functions
+		public static void DrawTitle(string title)
+		{
+			EditorGUILayout.PrefixLabel(title);	
+		}
+
 		public static void DrawLine()
+		{
+			DrawLine(EditorGUIUtility.isProSkin ? ScribeGUIStyle.collapsibleHeaderOpenColor : ScribeGUIStyle.collapsibleHeaderClosedColor);
+		}
+
+		public static void DrawLine(Color color)
 		{
 			GUILayout.Box("", new GUILayoutOption[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) });
 		}

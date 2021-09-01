@@ -27,7 +27,9 @@ namespace Discode.Breakout.Editor
 			{
 				if (isRequiredAndEmpty && string.IsNullOrEmpty(label.tooltip))
 				{
-					label.tooltip = "This field is required";
+					RequiredAttribute required = attribute as RequiredAttribute;
+
+					label.tooltip = string.IsNullOrEmpty(required.Message) ? "This field is required" : required.Message;
 				}
 
 				EditorGUI.PropertyField(position, property, label);

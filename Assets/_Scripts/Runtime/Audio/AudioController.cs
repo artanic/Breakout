@@ -1,3 +1,4 @@
+using Discode.Breakout.Effects;
 using Discode.Breakout.Networking;
 using Mirror;
 using System;
@@ -7,73 +8,78 @@ using UnityEngine;
 
 namespace Discode.Breakout.Audio
 {
+    /// <summary>
+    /// Controls local sound behaviour.
+    /// </summary>
     public class AudioController : MonoBehaviour
     {
-        [SerializeField]
-        private AudioOrigin launchSoundTemplate = null;
+        /// <summary>
+        /// Template for cloning
+        /// </summary>
+        [SerializeField, Required]
+        private AudioOrigin dropoutSoundTemplate = null;
 
-        [SerializeField]
-        private AudioOrigin bounceSoundTemplate = null;
-
-        [SerializeField]
-        private AudioOrigin breakBrickSoundTemplate = null;
-
-        [SerializeField]
-        private AudioOrigin dropzoneSoundTemplate = null;
-
-        [SerializeField]
+        /// <summary>
+        /// Audio source for background muusic.
+        /// </summary>
+        [SerializeField, Required]
         private AudioSource musicAudioSource = null;
+        
+        /// <summary>
+        /// Play the background music when the client join a game.
+        /// </summary>
+        [SerializeField]
+        private bool playMusicOnJoin = false;
+
+        public bool IsMusicPlaying => musicAudioSource.isPlaying;
 
 		private void OnEnable()
 		{
-            MyNetworkManager.OnClientStart += OnClientStart;
-            MyNetworkManager.OnClientStop += OnClientStop;
+            GameNetworkManager.OnClientStart += OnClientStart;
+            GameNetworkManager.OnClientStop += OnClientStop;
         }
 
 		private void OnDisable()
 		{
-            MyNetworkManager.OnClientStart -= OnClientStart;
-            MyNetworkManager.OnClientStop -= OnClientStop;
+            GameNetworkManager.OnClientStart -= OnClientStart;
+            GameNetworkManager.OnClientStop -= OnClientStop;
         }
 
         private void OnClientStart()
 		{
-            musicAudioSource.Play();
-            NetworkClient.RegisterHandler<AudioEventMessage>(OnAudioEvent, false);
+            if (playMusicOnJoin)
+            {
+                musicAudioSource.Play();
+            }
         }
 
         private void OnClientStop()
 		{
             musicAudioSource.Stop();
-            NetworkClient.UnregisterHandler<AudioEventMessage>();
+            AudioManager.Instance.Cleanup();
+            SpecialEffectManager.Instance.Cleanup();
         }
 
-        private void OnAudioEvent(AudioEventMessage message)
+        /// <summary>
+        /// Play the dropout sound effect.
+        /// </summary>
+        public void PlayDropoutSound()
 		{
-            AudioOrigin audioOriginToPlay;
+            AudioManager.Instance.PlayAudioOrigin(GameConstants.AUDIO_KEY_OUT_OF_BOUNDS, dropoutSoundTemplate);
+		}
 
-            switch (message.AudioEvent)
+        /// <summary>
+        /// Toggle the mute state for music.
+        /// </summary>
+        public void ToggleMusic()
+		{
+            if (musicAudioSource.isPlaying)
 			{
-                case AudioEventType.Launch:
-                    audioOriginToPlay = launchSoundTemplate;
-                    break;
-
-                default:
-                case AudioEventType.Bounce:
-                    audioOriginToPlay = bounceSoundTemplate;
-                    break;
-
-                case AudioEventType.Break:
-                    audioOriginToPlay = breakBrickSoundTemplate;
-                    break;
-
-                case AudioEventType.Dropout:
-                    audioOriginToPlay = dropzoneSoundTemplate;
-                    break;
+                musicAudioSource.Stop();
+                return;
 			}
 
-            AudioOrigin audioOrigin = Instantiate(audioOriginToPlay);
-            audioOrigin.Play();
-        }
-    }
+            musicAudioSource.Play();
+		}
+	}
 }

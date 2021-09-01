@@ -2,34 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using Discode.Breakout.Gameplay;
 using Discode.Breakout.Networking;
 
 namespace Discode.Breakout.UI
 {
     public class GameplayUI : MonoBehaviour
     {
-        [SerializeField]
+        [SerializeField, Required]
         private TMP_Text scoreDisplay = null;
 
 		private void OnEnable()
 		{
-			MyNetworkManager.OnClientStart += OnClientStart;
+			GameNetworkManager.OnClientStart += OnClientStart;
+			GameNetworkManager.OnClientStop += OnClientStop;
 			Scorer.OnScoreChanged += OnScoreChanged;
+			GameController.OnScorerChanged += OnScorerChanged;
 			OnScoreChanged(0);
 		}
 
 		private void OnDisable()
 		{
-			MyNetworkManager.OnClientStart -= OnClientStart;
+			GameNetworkManager.OnClientStart -= OnClientStart;
+			GameNetworkManager.OnClientStop -= OnClientStop;
 			Scorer.OnScoreChanged -= OnScoreChanged;
+			GameController.OnScorerChanged -= OnScorerChanged;
 		}
 
 		private void OnClientStart()
 		{
-			GameObject controller = GameObject.FindGameObjectWithTag("GameController");
+			GameObject controller = GameObject.FindGameObjectWithTag(UnityConstants.Tags.GameController);
 			GameController gameController = controller.GetComponent<GameController>();
-			OnScoreChanged(gameController.GetCurrentScore());
+			if (gameController.Scorer != null)
+			{
+				OnScoreChanged(gameController.Scorer.CurrentScore);
+			}
+		}
+
+		private void OnClientStop()
+		{
+			OnScoreChanged(0);
+		}
+
+		private void OnScorerChanged(Scorer scorer)
+		{
+			OnScoreChanged(scorer.CurrentScore);
 		}
 
 		private void OnScoreChanged(int score)

@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac76e410e144e84abb0a3aac0191c8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameBehaviourTemplate: {fileID: 5542339503762936927, guid: f92e5fd86e6815849b797ce37816f6f2, type: 3}
-  brickManagerTemplate: {fileID: 7169681887645343642, guid: d7ea1d4a32bf813439c009ef09972562, type: 3}
-  scorerTemplate: {fileID: 96925168448076934, guid: 27d85b5fc42f60646b008f1ce1bf72b5, type: 3}
+  serverGameBehaviourTemplate: {fileID: 5542339503762936927, guid: f92e5fd86e6815849b797ce37816f6f2, type: 3}
+  scorerTempalte: {fileID: 4479029288480646402, guid: c5cdfd27ba28ae74bb31776224c3592b, type: 3}
   backgroundMaterial: {fileID: 2100000, guid: 267c41580b85ba94898c64a5d0a1f648, type: 2}
+  backgroundDepth: 15
 --- !u!114 &6680658179392180040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,11 +61,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a889d3c50956174b9befe62dbba1446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchSoundTemplate: {fileID: 7945222252072778651, guid: b3123ab019a3cab4ca8cf687610f2290, type: 3}
-  bounceSoundTemplate: {fileID: 7945222252072778651, guid: c2923734489574040be9735aaed54f4c, type: 3}
-  breakBrickSoundTemplate: {fileID: 7945222252072778651, guid: 24f6eaa6964247a46b1bfcba6fce17e0, type: 3}
-  dropzoneSoundTemplate: {fileID: 7945222252072778651, guid: 919086333a431d24db6855856d2a1f40, type: 3}
+  dropoutSoundTemplate: {fileID: 7945222252072778651, guid: 919086333a431d24db6855856d2a1f40, type: 3}
   musicAudioSource: {fileID: 2824484181594498058}
+  playOnJoin: 0
 --- !u!82 &2824484181594498058
 AudioSource:
   m_ObjectHideFlags: 0

@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Discode.Breakout.Editor
+namespace Discode.Breakout
 {
 	public class RequiredAttribute : PropertyAttribute
 	{
-		public RequiredAttribute()
-		{
+		public string Message = string.Empty;
 
+		public RequiredAttribute() { }
+		
+		public RequiredAttribute(string message)
+		{
+			this.Message = message;
 		}
 	}
 }
