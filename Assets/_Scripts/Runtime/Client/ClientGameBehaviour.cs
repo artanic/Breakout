@@ -43,7 +43,7 @@ namespace Discode.Breakout.Client
 		}
 
 		/// <summary>
-		/// Fetch brick state data after game setup.
+		/// Fetch brick state data after new game setup.
 		/// </summary>
 		private void OnNewGame()
 		{
@@ -72,7 +72,7 @@ namespace Discode.Breakout.Client
 		}
 
 		/// <summary>
-		/// Update the local client's bricks using the level builder.
+		/// Update the local client's bricks state.
 		/// </summary>
 		/// <param name="syncData">Array of latest brick data</param>
 		[TargetRpc]
